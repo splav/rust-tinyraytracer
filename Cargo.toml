@@ -1,0 +1,10 @@
+[package]
+name = "ray-demo"
+version = "0.1.0"
+authors = ["Sergey Alexandrov <splavgm@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+nalgebra = "0.17.*"
+jpeg-decoder = "0.1.*"
+rayon = "1.*"
