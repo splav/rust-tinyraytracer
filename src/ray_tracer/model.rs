@@ -108,7 +108,7 @@ fn ray_triangle_intersect(
     let edge2 = vert2 - vert0;
     let h = dir.cross(&edge2);
     let det = edge1.dot(&h);
-    if det < 1e-5 {
+    if det.abs() < 1e-5 {
         return None;
     }
     let l_det = 1. / det;
