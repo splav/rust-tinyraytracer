@@ -1,6 +1,7 @@
 use std::cmp;
 
-use jpeg_decoder::Decoder;
+use image::jpeg::JPEGDecoder;
+use image::ImageDecoder;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, BufWriter};
@@ -17,9 +18,9 @@ pub struct Image {
 impl Image {
     pub fn load(file_name: &str) -> Self {
         let file = File::open(file_name).expect("failed to open image");
-        let mut decoder = Decoder::new(BufReader::new(file));
-        let pixels = decoder.decode().expect("failed to decode image");
-        let metadata = dbg!(decoder.info().expect("failed to obtain metadata"));
+        let decoder = JPEGDecoder::new(BufReader::new(file)).expect("failed to load jpeg file");
+        let (width, height) = decoder.dimensions();
+        let pixels = decoder.read_image().expect("failed to decode jpeg file");
 
         let float_data: Vec<_> = pixels.iter().map(|v| (f32::from(*v)) / 255.).collect();
         let buffer = float_data[..]
@@ -27,13 +28,36 @@ impl Image {
             .map(|c| Vec3f::from_column_slice(c))
             .collect();
         Self {
-            width: metadata.width as usize,
-            height: metadata.height as usize,
+            width: width as usize,
+            height: height as usize,
             buffer,
         }
     }
 
     pub fn save(&self) -> std::io::Result<()> {
+        let mut temporary = self.buffer.clone();
+        let u8_buffer: Vec<u8> = temporary
+            .iter_mut()
+            .map(|p| {
+                let max = p.max();
+                if max > 1.0 {
+                    *p /= max
+                }
+                p.iter()
+                    .map(|v| cmp::max(cmp::min((255. * v) as u8, 255), 0))
+            })
+            .flatten()
+            .collect();
+        image::save_buffer(
+            "out.jpeg",
+            &u8_buffer,
+            self.width as u32,
+            self.height as u32,
+            image::RGB(8),
+        )
+    }
+
+    pub fn save_ppm(&self) -> std::io::Result<()> {
         let mut file = BufWriter::new(File::create("out.ppm")?);
 
         write!(file, "P6\n{} {}\n255\n", self.width, self.height)?;

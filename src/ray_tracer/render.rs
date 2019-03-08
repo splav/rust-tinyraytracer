@@ -2,7 +2,7 @@ use std::f32;
 
 use rayon::prelude::*;
 
-use super::image::Image;
+use super::raster::Image;
 use super::scene::Scene;
 use super::Vec3f;
 

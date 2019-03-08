@@ -1,10 +1,10 @@
 use std::f32;
 
-use super::image::Image;
 use super::light::Light;
 use super::material::Material;
 use super::model::Model;
 use super::plane::Plane;
+use super::raster::Image;
 use super::sphere::Sphere;
 use super::Vec3f;
 

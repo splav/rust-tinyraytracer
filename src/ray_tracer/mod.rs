@@ -4,7 +4,7 @@ pub type Vec3f = Vector3<f32>;
 pub type Vec3u = Vector3<usize>;
 pub type Vec4f = Vector4<f32>;
 
-mod image;
+mod raster;
 mod light;
 mod material;
 mod model;
@@ -13,7 +13,7 @@ mod render;
 mod scene;
 mod sphere;
 
-pub use image::Image;
+pub use raster::Image;
 pub use light::Light;
 pub use material::Material;
 pub use model::Geometry;
